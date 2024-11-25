@@ -1,7 +1,7 @@
 local TARGET_DIR = "/usr/bin"
 
 local FILES = {
-  "mb/airlock.lua"
+  "mb/airlock/"
 }
 
 for _, file in ipairs(FILES) do
@@ -9,6 +9,8 @@ for _, file in ipairs(FILES) do
   fs.delete(local_file)
 end
 
+settings.undefine("mb.airlock.decon")
+settings.undefine("mb.airlock.decon_side")
 settings.undefine("mb.airlock.door_inner")
 settings.undefine("mb.airlock.door_inner_side")
 settings.undefine("mb.airlock.door_outer")
