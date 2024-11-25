@@ -1,3 +1,5 @@
+local Table = require "mb.algorithm.table"
+
 --- UI for the inner and outer door.
 ---@class DoorUi
 ---@field private _state number Current state.
@@ -28,7 +30,7 @@ function DoorUi.new(ui, name, request_open)
 end
 
 --- Returns all available states.
-function DoorUi:get_states()
+function DoorUi.get_states()
   return States
 end
 
@@ -55,34 +57,33 @@ function DoorUi:init_ui(name, request_open)
     self._elements._name = self._ui.new.text(
       self._ui.text{
         text = self._name,
-        x = 0, y = 0,
+        x = 1, y = 1,
         centered = true,
         transparent = true,
+        width = self._ui.width,
         height = 3
       }
     )
   end
 
-  local merge = require("GuiH").apis.general.tables.merge
-
   local common_button_properties = {
-    x = 2, y = 5,
+    x = 3, y = 6,
     width = self._ui.width - 4, height = self._ui.height - 7,
   }
 
-  local open_button_properties =   merge(common_button_properties, {
+  local open_button_properties =   Table.merge(common_button_properties, {
     text = self._ui.text{
       text = "OPEN",
       centered = true,
       transparent = true,
-      fg = colors.white
+      fg = colors.lightGray
     },
-    background_color = colors.lime
+    background_color = colors.gray
   })
 
-  local locked_button_properties = merge(common_button_properties, {
+  local locked_button_properties = Table.merge(common_button_properties, {
     text = self._ui.text{
-      text = "🔒",
+      text = "LOCKED",
       centered = true,
       transparent = true,
       fg = colors.white
@@ -90,12 +91,12 @@ function DoorUi:init_ui(name, request_open)
     background_color = colors.red
   })
 
-  local closed_button_properties = merge(common_button_properties, {
+  local closed_button_properties = Table.merge(common_button_properties, {
     text = self._ui.text{
       text = "OPEN",
       centered = true,
       transparent = true,
-      fg = colors.lightGray
+      fg = colors.white
     },
     background_color = colors.green,
     on_click = request_open
@@ -116,10 +117,10 @@ end
 ---@private
 function DoorUi:update_ui(from, to)
   if from then
-    self._elements._buttons = self._elements._buttons[from].cut()
+    self._elements._buttons[from] = self._elements._buttons[from].cut()
   end
 
-  self._elements._buttons = self._elements._buttons[to].parse()
+  self._elements._buttons[to] = self._elements._buttons[to].parse()
 end
 
 return DoorUi
