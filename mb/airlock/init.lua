@@ -7,7 +7,7 @@ local RsReader = require "mb.peripheral.rs_reader"
 
 local GuiH = require "GuiH"
 
-settings.load()
+settings.load("./.settings")
 
 -- Controller of the door inside the protected area.
 local door_inner = Door.new(
@@ -36,13 +36,13 @@ if settings.get("mb.airlock.door.inner.lock") then
   )
 end
 
-local monitor_chamber = Monitor.new(settings.get("mb.airlock.monitor_chamber"))
-local monitor_inner = Monitor.new(settings.get("mb.airlock.monitor_inner"))
-local monitor_outer = Monitor.new(settings.get("mb.airlock.monitor_outer"))
+local monitor_chamber = Monitor.new(settings.get("mb.airlock.monitor.chamber"))
+local monitor_inner = Monitor.new(settings.get("mb.airlock.monitor.inner"))
+local monitor_outer = Monitor.new(settings.get("mb.airlock.monitor.outer"))
 
 local decon = RsDevice.new(
   settings.get("mb.airlock.decon"),
-  settings.get("mb.airlock.decon_side")
+  settings.get("mb.airlock.decon.side")
 )
 
 local DECON_DURATION = settings.get("mb.airlock.decon.duration")
