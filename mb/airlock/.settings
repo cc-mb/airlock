@@ -1,4 +1,6 @@
 {
+  ["mb.airlock.name"] = nil -- name shown on outer door panel
+
   -- decontamination
   ["mb.airlock.decon"] = nil, -- decontamination controller
   ["mb.airlock.decon.duration"] = 5, -- [s]

@@ -73,8 +73,8 @@ local desired_state = States.INNER_CLOSED
 -- duration for which to keep the current state [s]
 local keep_state = 0.0
 
-local door_inner_ui = DoorUi.new(gui_inner, "Foo", function() desired_state = States.INNER_OPEN end)
-local door_outer_ui = DoorUi.new(gui_outer, "Bar", function() desired_state = States.OUTER_OPEN end)
+local door_inner_ui = DoorUi.new(gui_inner, "EXIT", function() desired_state = States.INNER_OPEN end)
+local door_outer_ui = DoorUi.new(gui_outer, settings.get("mb.airlock.name"), function() desired_state = States.OUTER_OPEN end)
 
 -- mapping state -> door state
 local inner_door_states = {
@@ -142,11 +142,11 @@ local transition = {
   [States.DECONTAMINATION] = {
     next = {
       state = States.OUTER_TRANSITION,
-      action = function () door_outer:open() end
+      action = function () decon:set_off(); door_outer:open() end
     },
     prev = {
       state = States.INNER_TRANSITION,
-      action = function () door_inner:open() end
+      action = function () decon:set_off(); door_inner:open() end
     }
   },
   [States.OUTER_CLOSED] = {
