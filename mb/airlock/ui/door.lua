@@ -8,10 +8,11 @@ local DoorUi = {}
 DoorUi.__index = DoorUi
 
 local States = {
-  OPEN = 0,
-  LOCKED = 1,
-  CLOSED = 2,
-  COUNT = 3
+  LOCKED = 0,
+  OPEN = 1,
+  BUSY = 2,
+  CLOSED = 3,
+  COUNT = 4
 }
 
 --- Constructor
@@ -21,7 +22,7 @@ local States = {
 function DoorUi.new(ui, name, request_open)
   local self = setmetatable({}, DoorUi)
 
-  self._state = States.CLOSED
+  self._state = States.LOCKED
   self._ui = ui
 
   self:init_ui(name or "", request_open)
@@ -71,40 +72,46 @@ function DoorUi:init_ui(name, request_open)
     width = self._ui.width - 4, height = self._ui.height - 7,
   }
 
-  local open_button_properties =   Table.merge(common_button_properties, {
-    text = self._ui.text{
-      text = "OPEN",
-      centered = true,
-      transparent = true,
-      fg = colors.lightGray
-    },
-    background_color = colors.gray
-  })
+  local common_text_properties = {
+    centered = true,
+    transparent = true,
+    fg = colors.white
+  }
 
   local locked_button_properties = Table.merge(common_button_properties, {
-    text = self._ui.text{
-      text = "LOCKED",
-      centered = true,
-      transparent = true,
-      fg = colors.white
-    },
+    text = self._ui.text(Table.merge(common_text_properties, { 
+      text = "LOCKED"
+    })),
     background_color = colors.red
   })
 
+  local open_button_properties = Table.merge(common_button_properties, {
+    text = self._ui.text(Table.merge(common_text_properties, {
+      text = "OPEN"
+    })),
+    background_color = colors.blue
+  })
+
+  local busy_button_properties = Table.merge(common_button_properties, {
+    text = self._ui.text(Table.merge(common_text_properties, {
+      text = "BUSY...",
+      fg = colors.lightGray
+    })),
+    background_color = colors.blue
+  })
+
   local closed_button_properties = Table.merge(common_button_properties, {
-    text = self._ui.text{
-      text = "OPEN",
-      centered = true,
-      transparent = true,
-      fg = colors.white
-    },
+    text = self._ui.text(Table.merge(common_text_properties, {
+      text = "OPEN"
+    })),
     background_color = colors.green,
     on_click = request_open
   })
 
   self._elements._buttons = {
-    [States.OPEN] = self._ui.new.button(open_button_properties).cut(),
     [States.LOCKED] = self._ui.new.button(locked_button_properties).cut(),
+    [States.OPEN] = self._ui.new.button(open_button_properties).cut(),
+    [States.BUSY] = self._ui.new.button(busy_button_properties).cut(),
     [States.CLOSED] = self._ui.new.button(closed_button_properties).cut()
   }
 

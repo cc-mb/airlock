@@ -1,0 +1,24 @@
+{
+  -- decontamination
+  ["mb.airlock.decon"] = nil, -- decontamination controller
+  ["mb.airlock.decon.duration"] = 10, -- [s]
+  ["mb.airlock.decon.side"] = "back",
+
+  -- doors
+  ["mb.airlock.door.inner"] = nil, -- door inside protected area
+  ["mb.airlock.door.inner.lock"] = nil, -- lock controller for inner door, if not set no lock will be used
+  ["mb.airlock.door.inner.lock.side"] = "back",
+  ["mb.airlock.door.inner.side"] = "back",
+  ["mb.airlock.door.outer"] = nil, -- door outside protected area
+  ["mb.airlock.door.outer.lock"] = nil, -- lock controller for outer door, if not set no lock will be used
+  ["mb.airlock.door.outer.lock.side"] = "back",
+  ["mb.airlock.door.outer.side"] = "back",
+  ["mb.airlock.door.duration"] = 3, -- duration of door held open [s]
+  ["mb.airlock.door.transition.duration"] = 2, -- duration of door transition [s]
+  ["mb.airlock.door.lock.duration"] = 5, -- unlock period [s]
+
+  -- monitors
+  ["mb.airlock.monitor.chamber"] = nil, -- monitor inside decontamination chamber
+  ["mb.airlock.monitor.inner"] = nil, -- monitor inside protected area
+  ["mb.airlock.monitor.outer"] = nil, -- monitor outside protected area
+}
