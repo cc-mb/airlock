@@ -54,6 +54,7 @@ end
 ---@private
 function DoorUi:init_ui(name, request_open)
   self._elements = {}
+  --[[
   if name then
     self._elements._name = self._ui.new.text(
       self._ui.text{
@@ -65,7 +66,7 @@ function DoorUi:init_ui(name, request_open)
         height = 3
       }
     )
-  end
+  end]]
 
   local common_button_properties = {
     x = 3, y = 6,
@@ -105,7 +106,7 @@ function DoorUi:init_ui(name, request_open)
       text = "OPEN"
     })),
     background_color = colors.green,
-    on_click = function () request_open(); print("STFU") end
+    on_click = request_open
   })
 
   self._elements._buttons = {
