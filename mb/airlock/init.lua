@@ -178,16 +178,22 @@ local transition = {
 }
 
 local function init()
+  local INIT = 0.2
   -- reset door
   door_inner:open()
-  os.sleep(DOOR_DURATION)
+  os.sleep(INIT)
   door_inner:close()
-  os.sleep(DOOR_DURATION)
+  os.sleep(INIT)
   
   door_outer:open()
-  os.sleep(DOOR_DURATION)
+  os.sleep(INIT)
   door_outer:close()
-  os.sleep(DOOR_DURATION)
+  os.sleep(INIT)
+
+  decon:set_on()
+  os.sleep(INIT)
+  decon:set_off()
+  os.sleep(INIT)
 end
 
 local function update_ui()
