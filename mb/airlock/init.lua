@@ -7,7 +7,9 @@ local RsReader = require "mb.peripheral.rs_reader"
 
 local GuiH = require "GuiH"
 
-settings.load("./.settings")
+local DIR = fs.getDir(shell.getRunningProgram())
+
+settings.load("/" .. fs.combine(DIR, ".settings"))
 
 -- Controller of the door inside the protected area.
 local door_inner = Door.new(

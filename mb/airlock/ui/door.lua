@@ -54,10 +54,10 @@ end
 ---@private
 function DoorUi:init_ui(name, request_open)
   self._elements = {}
-  if self._name then
+  if name then
     self._elements._name = self._ui.new.text(
       self._ui.text{
-        text = self._name,
+        text = name,
         x = 1, y = 1,
         centered = true,
         transparent = true,
@@ -105,7 +105,7 @@ function DoorUi:init_ui(name, request_open)
       text = "OPEN"
     })),
     background_color = colors.green,
-    on_click = request_open
+    on_click = function () request_open(); print("STFU") end
   })
 
   self._elements._buttons = {
