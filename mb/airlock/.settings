@@ -14,8 +14,8 @@
   ["mb.airlock.door.outer.lock.side"] = "back",
   ["mb.airlock.door.outer.side"] = "back",
   ["mb.airlock.door.duration"] = 3, -- duration of door held open [s]
-  ["mb.airlock.door.transition.duration"] = 2, -- duration of door transition [s]
   ["mb.airlock.door.lock.duration"] = 5, -- unlock period [s]
+  ["mb.airlock.door.transition.duration"] = 2, -- duration of door transition [s]
 
   -- monitors
   ["mb.airlock.monitor.chamber"] = nil, -- monitor inside decontamination chamber
