@@ -178,7 +178,7 @@ local transition = {
 }
 
 local function init()
-  local INIT = 0.2
+  local INIT = 0.5
   -- reset door
   door_inner:open()
   os.sleep(INIT)
@@ -214,7 +214,7 @@ local function update(delta_t)
 
     t.action()
     state = t.state
-    keep_state = duration[t.state]
+    keep_state = duration[t.state] or 0
   end
 
   update_ui()
@@ -235,7 +235,7 @@ end
 
 init()
 
-gui_chamber.async(gui_inner.execute)
-gui_chamber.async(gui_outer.execute)
+gui_chamber.async(function () gui_inner.execute() end)
+gui_chamber.async(function () gui_outer.execute() end)
 
 gui_chamber.execute(main)
