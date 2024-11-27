@@ -1,5 +1,11 @@
 {
-  ["mb.airlock.name"] = nil -- name shown on outer door panel
+  -- info panels
+  ["mb.airlock.room.inner.number"] = nil -- room number shown by inner door
+  ["mb.airlock.room.inner.name"] = nil -- room name shown by inner door
+  ["mb.airlock.room.inner.hazard"] = nil -- room hazard info shown by inner door
+  ["mb.airlock.room.outer.number"] = nil -- room number shown by outer door
+  ["mb.airlock.room.outer.name"] = nil -- room name shown by inner door
+  ["mb.airlock.room.outer.hazard"] = nil -- room hazard info shown by inner door
 
   -- decontamination
   ["mb.airlock.decon"] = nil, -- decontamination controller
@@ -8,16 +14,20 @@
 
   -- doors
   ["mb.airlock.door.inner"] = nil, -- door inside protected area
-  ["mb.airlock.door.inner.lock"] = nil, -- lock controller for inner door, if not set no lock will be used
-  ["mb.airlock.door.inner.lock.side"] = "back",
   ["mb.airlock.door.inner.side"] = "back",
   ["mb.airlock.door.outer"] = nil, -- door outside protected area
-  ["mb.airlock.door.outer.lock"] = nil, -- lock controller for outer door, if not set no lock will be used
-  ["mb.airlock.door.outer.lock.side"] = "back",
   ["mb.airlock.door.outer.side"] = "back",
   ["mb.airlock.door.duration"] = 2, -- duration of door held open [s]
-  ["mb.airlock.door.lock.duration"] = 3, -- unlock period [s]
   ["mb.airlock.door.transition.duration"] = 1, -- duration of door transition [s]
+
+  -- locks
+  ["mb.airlock.lock.inner"] = nil, -- lock controller for inner door, if not set no lock will be used
+  ["mb.airlock.lock.inner.side"] = "back",
+  ["mb.airlock.lock.inner.level"] = nil,
+  ["mb.airlock.lock.outer"] = nil, -- lock controller for outer door, if not set no lock will be used
+  ["mb.airlock.lock.outer.side"] = "back",
+  ["mb.airlock.lock.outer.level"] = nil,
+  ["mb.airlock.lock.duration"] = 3, -- unlock period [s]
 
   -- monitors
   ["mb.airlock.monitor.chamber"] = nil, -- monitor inside decontamination chamber

@@ -3,6 +3,7 @@ local BRANCH = "master"
 
 local TARGET_DIR = "/usr/bin"
 local FILES = {
+  "mb/airlock/ui/chamber.lua",
   "mb/airlock/ui/door.lua",
   "mb/airlock/.settings",
   "mb/airlock/init.lua"
