@@ -269,28 +269,28 @@ local function update(delta_t)
   end
 
   if door_inner_lock then
-    if inner_unlocked_for > 0 then
+    if door_inner_lock:is_on() then 
+      if inner_unlocked_for <= 0 then
+        inner_unlocked_for = LOCK_UNLOCK_DURATION
+        door_inner_ui:set_locked(false)
+      end
+    elseif inner_unlocked_for > 0 then
       inner_unlocked_for = inner_unlocked_for - delta_t
     elseif not door_inner_ui:get_locked() then
       door_inner_ui:set_locked(true)
     end
-
-    if door_inner_lock:is_on() then
-      inner_unlocked_for = LOCK_UNLOCK_DURATION
-      door_inner_ui:set_locked(false)
-    end
   end
 
   if door_outer_lock then
-    if outer_unlocked_for > 0 then
+    if door_outer_lock:is_on() then 
+      if outer_unlocked_for <= 0 then
+        outer_unlocked_for = LOCK_UNLOCK_DURATION
+        door_outer_ui:set_locked(false)
+      end
+    elseif outer_unlocked_for > 0 then
       outer_unlocked_for = outer_unlocked_for - delta_t
     elseif not door_outer_ui:get_locked() then
       door_outer_ui:set_locked(true)
-    end
-
-    if door_outer_lock:is_on() then
-      outer_unlocked_for = LOCK_UNLOCK_DURATION
-      door_outer_ui:set_locked(false)
     end
   end
 end
