@@ -2,8 +2,6 @@ local Table = require "mb.algorithm.table"
 
 --- UI for the inner and outer door.
 ---@class ChamberUi
----@field private _inner_request_open function? Callback used to request inner door opening.
----@field private _outer_request_open function? Callback used to request outer door opening.
 ---@field private _state number Current state.
 ---@field private _ui table GuiH instance.
 local ChamberUi = {}
@@ -67,9 +65,6 @@ end
 ---@param params ChamberUiParams Chamber UI creation parameters.
 ---@private
 function ChamberUi:init_ui(params)
-  self._inner_request_open = params.inner_request_open
-  self._outer_request_open = params.outer_request_open
-
   self._ui.new.rectangle{
     name = "upper_area",
     graphic_order = 0,
@@ -110,7 +105,8 @@ function ChamberUi:init_ui(params)
       transparent = true,
       fg = colors.white
     },
-    background_color = colors.green
+    background_color = colors.green,
+    on_click = params.inner_request_open
   }
 
   self._ui.new.button{
@@ -123,7 +119,8 @@ function ChamberUi:init_ui(params)
       transparent = true,
       fg = colors.white
     },
-    background_color = colors.green
+    background_color = colors.green,
+    on_click = params.outer_request_open
   }
 
   self._ui.new.progressbar{
@@ -157,45 +154,38 @@ end
 --- Update UI based on the state.
 ---@private
 function ChamberUi:update_ui()
-  local function active_button_props(on_click)
-    return {
-      fg = colors.white,
-      bg = colors.green,
-      on_click = on_click
-    }
-  end
+  local active_button_props = {
+    fg = colors.white,
+    bg = colors.green,
+    active = true
+  }
 
   local inactive_button_props = {
     fg = colors.lightGray,
     bg = colors.gray,
-    on_click = nil
+    active = false
   }
 
-  local function BUTTON_PROPS(on_click)
-    return {
-      [States.OPEN] = inactive_button_props,
-      [States.BUSY] = inactive_button_props,
-      [States.CLOSED] = active_button_props(on_click),
-      [States.DECON] = inactive_button_props
-    }
-  end
+  local BUTTON_PROPS = {
+    [States.OPEN] = inactive_button_props,
+    [States.BUSY] = inactive_button_props,
+    [States.CLOSED] = active_button_props,
+    [States.DECON] = inactive_button_props
+  }
 
-  local INNER_BUTTON_PROPS = BUTTON_PROPS(self._inner_request_open)
-  local OUTER_BUTTON_PROPS = BUTTON_PROPS(self._outer_request_open)
+  local props = BUTTON_PROPS[self._state]
 
-  local inner_props = INNER_BUTTON_PROPS[self._state]
   local inner_button = self._ui.elements.button["inner_button"]
   inner_button.visible = self._state ~= States.DECON
-  inner_button.text.fg = inner_props.fg
-  inner_button.background_color = inner_props.bg
-  inner_button.on_click = inner_props.on_click
+  inner_button.text.fg = props.fg
+  inner_button.background_color = props.bg
+  inner_button.reactive = props.active
 
-  local outer_props = OUTER_BUTTON_PROPS[self._state]
   local outer_button = self._ui.elements.button["outer_button"]
   outer_button.visible = self._state ~= States.DECON
-  outer_button.text.fg = outer_props.fg
-  outer_button.background_color = outer_props.bg
-  outer_button.on_click = outer_props.on_click
+  outer_button.text.fg = props.fg
+  outer_button.background_color = props.bg
+  outer_button.reactive = props.active
 
   local decon_bar = self._ui.elements.progressbar["decon_bar"]
   decon_bar.visible = self._state == States.DECON

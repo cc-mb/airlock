@@ -3,7 +3,6 @@ local Table = require "mb.algorithm.table"
 --- UI for the inner and outer door.
 ---@class DoorUi
 ---@field private _locked boolean If set controls are locked.
----@field private _request_open function? Callback used to request door opening.
 ---@field private _state number Current state.
 ---@field private _ui table GuiH instance.
 local DoorUi = {}
@@ -70,8 +69,6 @@ end
 ---@param params DoorUiParams Door UI creation parameters.
 ---@private
 function DoorUi:init_ui(params)
-  self._request_open = params.request_open
-
   self._ui.new.rectangle{
     name = "upper_area",
     graphic_order = 0,
@@ -158,7 +155,8 @@ function DoorUi:init_ui(params)
       transparent = true,
       fg = colors.white
     },
-    background_color = colors.green
+    background_color = colors.green,
+    on_click = params.request_open
   }
 
   self._ui.new.rectangle{
@@ -193,29 +191,29 @@ function DoorUi:update_ui()
     [States.OPEN] = {
       fg = colors.lightGray,
       bg = colors.gray,
-      on_click = nil
+      active = false
     },
     [States.BUSY] = {
       fg = colors.lightGray,
       bg = colors.gray,
-      on_click = nil
+      active = false
     },
     [States.CLOSED] = {
       fg = colors.white,
       bg = colors.green,
-      on_click = self._request_open
+      active = true
     }
   }
 
   local props = BUTTON_PROPS[self._state]
   if self._locked then
-    props.on_click = nil
+    props.active = false
   end
 
   local button = self._ui.elements.button["button"]
   button.text.fg = props.fg
   button.background_color = props.bg
-  button.on_click = props.on_click
+  button.reactive = props.active
 
   local lower_area_locked = self._ui.elements.rectangle["lower_area_locked"]
   lower_area_locked.visible = self._locked
