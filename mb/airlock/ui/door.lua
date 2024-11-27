@@ -70,6 +70,8 @@ end
 ---@param params DoorUiParams Door UI creation parameters.
 ---@private
 function DoorUi:init_ui(params)
+  self._request_open = params.request_open
+
   self._ui.new.rectangle{
     name = "upper_area",
     x = 1, y = 1,
@@ -146,7 +148,7 @@ function DoorUi:init_ui(params)
 
   self._ui.new.button{
     name = "button",
-    x = 3, y = 4,
+    x = 3, y = 5,
     width = self._ui.width - 4, height = self._ui.height - 5,
     text = self._ui.text{
       text = "OPEN",

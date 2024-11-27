@@ -1,11 +1,11 @@
 {
   -- info panels
-  ["mb.airlock.room.inner.number"] = nil -- room number shown by inner door
-  ["mb.airlock.room.inner.name"] = nil -- room name shown by inner door
-  ["mb.airlock.room.inner.hazard"] = nil -- room hazard info shown by inner door
-  ["mb.airlock.room.outer.number"] = nil -- room number shown by outer door
-  ["mb.airlock.room.outer.name"] = nil -- room name shown by inner door
-  ["mb.airlock.room.outer.hazard"] = nil -- room hazard info shown by inner door
+  ["mb.airlock.room.inner.number"] = nil, -- room number shown by inner door
+  ["mb.airlock.room.inner.name"] = nil, -- room name shown by inner door
+  ["mb.airlock.room.inner.hazard"] = nil, -- room hazard info shown by inner door
+  ["mb.airlock.room.outer.number"] = nil, -- room number shown by outer door
+  ["mb.airlock.room.outer.name"] = nil, -- room name shown by inner door
+  ["mb.airlock.room.outer.hazard"] = nil, -- room hazard info shown by inner door
 
   -- decontamination
   ["mb.airlock.decon"] = nil, -- decontamination controller

@@ -26,12 +26,12 @@ local DECON_DURATION = settings.get("mb.airlock.decon.duration")
 local DECON_SIDE = settings.get("mb.airlock.decon.side")
 
   -- doors
-local DOOR_INNER_CONTROLLER = settings("mb.airlock.door.inner")
-local DOOR_INNER_SIDE = settings("mb.airlock.door.inner.side")
-local DOOR_OUTER_CONTROLLER = settings("mb.airlock.door.outer")
-local DOOR_OUTER_SIDE = settings("mb.airlock.door.outer.side")
-local DOOR_OPEN_DURATION = settings("mb.airlock.door.duration")
-local DOOR_TRANSITION_DURATION = settings("mb.airlock.door.transition.duration")
+local DOOR_INNER_CONTROLLER = settings.get("mb.airlock.door.inner")
+local DOOR_INNER_SIDE = settings.get("mb.airlock.door.inner.side")
+local DOOR_OUTER_CONTROLLER = settings.get("mb.airlock.door.outer")
+local DOOR_OUTER_SIDE = settings.get("mb.airlock.door.outer.side")
+local DOOR_OPEN_DURATION = settings.get("mb.airlock.door.duration")
+local DOOR_TRANSITION_DURATION = settings.get("mb.airlock.door.transition.duration")
 
   -- locks
 local LOCK_INNER_READER = settings.get("mb.airlock.lock.inner")

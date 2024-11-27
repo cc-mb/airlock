@@ -67,6 +67,9 @@ end
 ---@param params ChamberUiParams Chamber UI creation parameters.
 ---@private
 function ChamberUi:init_ui(params)
+  self._inner_request_open = params.inner_request_open
+  self._outer_request_open = params.outer_request_open
+
   self._ui.new.rectangle{
     name = "upper_area",
     x = 1, y = 1,
@@ -95,9 +98,9 @@ function ChamberUi:init_ui(params)
     }
   end
 
-  local inner_button = self._ui.new.button{
+  self._ui.new.button{
     name = "inner_button",
-    x = 3, y = 4,
+    x = 3, y = 5,
     width = (self._ui.width / 2) - 3, height = self._ui.height - 5,
     text = self._ui.text{
       text = "OPEN",
@@ -110,8 +113,8 @@ function ChamberUi:init_ui(params)
 
   self._ui.new.button{
     name = "outer_button",
-    x = inner_button.x + inner_button.width + 2, y = 4,
-    width = (self._ui.width - 3 - inner_button.width) - 3, height = self._ui.height - 5,
+    x = (self._ui.width / 2) + 2, y = 5,
+    width = (self._ui.width / 2) - 3, height = self._ui.height - 5,
     text = self._ui.text{
       text = "OPEN",
       centered = true,
@@ -137,7 +140,7 @@ function ChamberUi:init_ui(params)
     visible = false,
     text = self._ui.text{
       text = "DECONTAMINATION",
-      x = 3, y = 4,
+      x = 3, y = 5,
       centered = true,
       transparent = true,
       fg = colors.white,
