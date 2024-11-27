@@ -74,6 +74,7 @@ function DoorUi:init_ui(params)
 
   self._ui.new.rectangle{
     name = "upper_area",
+    graphic_order = 0,
     x = 1, y = 1,
     width = self._ui.width, height = 3,
     color = colors.white
@@ -81,6 +82,7 @@ function DoorUi:init_ui(params)
 
   self._ui.new.rectangle{
     name = "lower_area",
+    graphic_order = 0,
     x = 1, y = 4,
     width = self._ui.width, height = self._ui.height - 3,
     color = colors.yellow

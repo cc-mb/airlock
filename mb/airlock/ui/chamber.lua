@@ -72,6 +72,7 @@ function ChamberUi:init_ui(params)
 
   self._ui.new.rectangle{
     name = "upper_area",
+    graphic_order = 0,
     x = 1, y = 1,
     width = self._ui.width, height = 3,
     color = colors.white
@@ -79,6 +80,7 @@ function ChamberUi:init_ui(params)
 
   self._ui.new.rectangle{
     name = "lower_area",
+    graphic_order = 0,
     x = 1, y = 4,
     width = self._ui.width, height = self._ui.height - 3,
     color = colors.yellow
@@ -138,6 +140,7 @@ function ChamberUi:init_ui(params)
   self._ui.new.text{
     name = "decon",
     visible = false,
+    graphic_order = 2,
     text = self._ui.text{
       text = "DECONTAMINATION",
       x = 3, y = 5,
@@ -189,7 +192,7 @@ function ChamberUi:update_ui()
 
   local outer_props = OUTER_BUTTON_PROPS[self._state]
   local outer_button = self._ui.elements.button["outer_button"]
-  inner_button.visible = self._state ~= States.DECON
+  outer_button.visible = self._state ~= States.DECON
   outer_button.text.fg = outer_props.fg
   outer_button.background_color = outer_props.bg
   outer_button.on_click = outer_props.on_click
@@ -197,7 +200,7 @@ function ChamberUi:update_ui()
   local decon_bar = self._ui.elements.progressbar["decon_bar"]
   decon_bar.visible = self._state == States.DECON
 
-  local decon = self._ui.elements.progressbar["decon"]
+  local decon = self._ui.elements.text["decon"]
   decon.visible = self._state == States.DECON
 end
 
