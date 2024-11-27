@@ -82,7 +82,7 @@ function DoorUi:init_ui(params)
 
   self._ui.new.rectangle{
     name = "lower_area",
-    graphic_order = 0,
+    graphic_order = -1,
     x = 1, y = 4,
     width = self._ui.width, height = self._ui.height - 3,
     color = colors.yellow
@@ -161,6 +161,15 @@ function DoorUi:init_ui(params)
     background_color = colors.green
   }
 
+  self._ui.new.rectangle{
+    name = "lower_area_locked",
+    visible = false,
+    graphic_order = 0,
+    x = 1, y = 4,
+    width = self._ui.width, height = self._ui.height - 3,
+    color = colors.red
+  }
+
   self._ui.new.text{
     name = "locked",
     visible = false,
@@ -208,8 +217,8 @@ function DoorUi:update_ui()
   button.background_color = props.bg
   button.on_click = props.on_click
 
-  local background = self._ui.elements.rectangle["lower_area"]
-  background.color = self._locked and colors.red or colors.yellow
+  local lower_area_locked = self._ui.elements.rectangle["lower_area_locked"]
+  lower_area_locked.visible = self._locked
 
   local locked = self._ui.elements.text["locked"]
   locked.visible = self._locked

@@ -131,7 +131,7 @@ function ChamberUi:init_ui(params)
     visible = false,
     direction = "left-right",
     value = 0.0,
-    x = 3, y = 4,
+    x = 3, y = 5,
     width = self._ui.width - 4, height = self._ui.height - 5,
     bg = colors.black,
     fg = colors.blue
