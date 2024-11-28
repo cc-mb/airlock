@@ -1,56 +1,60 @@
-local Table = require "mb.algorithm.table"
+local Monitor = require "mb.peripheral.monitor"
 
 --- UI for the inner and outer door.
 ---@class DoorUi
 ---@field private _locked boolean If set controls are locked.
----@field private _state number Current state.
+---@field private _suspended boolean Flag marking UI as suspended.
 ---@field private _ui table GuiH instance.
 local DoorUi = {}
 DoorUi.__index = DoorUi
 
-local States = {
-  OPEN = 1,
-  BUSY = 2,
-  CLOSED = 3
-}
+--- Panel config
+---@class PanelConfig
+---@field device string Panel monitor.
+---@field room RoomInfo Room information shown on panel.
+
+--- Room information
+---@class RoomInfo
+---@field hazard string? Hazard warning.
+---@field name string? Room name.
+---@field number number? Room number.
 
 --- Door UI creation parameters.
----@class DoorUiParams
----@field room_number number? Room number shown.
----@field room_name string? Room name shown.
----@field room_hazard string? Room hazard info shown.
+---@class DoorUiCreationParams
+---@field panel PanelConfig Panel config.
 ---@field lock_level number? Room lock level shown.
----@field request_open function? Callback used to request door opening.
+---@field request_open function Callback used to request door opening.
+---@field ui table GuiH
 local DoorUiParams = {}
 
---- Constructor
----@param ui table GuiH instance.
----@param params DoorUiParams? Door UI creation parameters.
-function DoorUi.new(ui, params)
+--- Constructor.
+---@param params DoorUiCreationParams Door UI creation parameters.
+function DoorUi.new(params)
   local self = setmetatable({}, DoorUi)
 
-  self._state = States.CLOSED
+  self._suspended = false
   self._locked = false
-  self._ui = ui
+  self._ui = params.ui.new(Monitor.new(params.panel.device))
 
-  self:init_ui(params or {})
+  self:init_ui(params)
   
   return self
 end
 
---- Returns all available states.
-function DoorUi.get_states()
-  return States
+--- Return whether suspended.
+function DoorUi:is_suspended()
+  return self._suspended
 end
 
---- Return current state.
-function DoorUi:get_state()
-  return self._state
+--- Suspend the UI.
+function DoorUi:suspend()
+  self._suspended = true
+  self:update_ui()
 end
 
---- Set new state.
-function DoorUi:set_state(state)
-  self._state = state
+--- Unsuspend the UI.
+function DoorUi:resume()
+  self._suspended = false
   self:update_ui()
 end
 
@@ -59,14 +63,26 @@ function DoorUi:get_locked()
   return self._locked
 end
 
--- Set new lock state.
+--- Set new lock state.
 function DoorUi:set_locked(locked)
   self._locked = locked
   self:update_ui()
 end
 
+--- Start main loop.
+---@param params ExecutionParameters
+function DoorUi:execute(params)
+  self._ui.execute(params.runtime, params.on_event, params.before_draw, params.after_draw)
+end
+
+--- Schedule async task.
+---@param params AsyncParameters
+function DoorUi:async(params)
+  self._ui.async(params.fn, params.delay, params.error_flag, params.debug)
+end
+
 --- Init UI
----@param params DoorUiParams Door UI creation parameters.
+---@param params DoorUiCreationParams Door UI creation parameters.
 ---@private
 function DoorUi:init_ui(params)
   self._ui.new.rectangle{
@@ -85,11 +101,11 @@ function DoorUi:init_ui(params)
     color = colors.yellow
   }
 
-  if params.room_number then
+  if params.panel.room.number then
     self._ui.new.text{
       name = "room_number",
       text = self._ui.text{
-        text = tostring(params.room_number),
+        text = tostring(params.panel.room.number),
         x = 1, y = 1,
         transparent = true,
         fg = colors.gray
@@ -97,11 +113,11 @@ function DoorUi:init_ui(params)
     }
   end
 
-  if params.room_name then
+  if params.panel.room.name then
     self._ui.new.text{
       name = "room_name",
       text = self._ui.text{
-        text = params.room_name,
+        text = params.panel.room.name,
         x = 1, y = 2,
         centered = true,
         transparent = true,
@@ -111,11 +127,11 @@ function DoorUi:init_ui(params)
     }
   end
 
-  if params.room_hazard then
+  if params.panel.room.hazard then
     self._ui.new.text{
       name = "room_hazard",
       text = self._ui.text{
-        text = params.room_hazard,
+        text = params.panel.room.hazard,
         x = 1, y = 3,
         centered = true,
         transparent = true,
@@ -187,33 +203,23 @@ end
 --- Update UI based on the state.
 ---@private
 function DoorUi:update_ui()
-  local BUTTON_PROPS = {
-    [States.OPEN] = {
+  local button_props = {}
+  if self._suspended then
+    button_props = {
       fg = colors.lightGray,
-      bg = colors.gray,
-      active = false
-    },
-    [States.BUSY] = {
-      fg = colors.lightGray,
-      bg = colors.gray,
-      active = false
-    },
-    [States.CLOSED] = {
-      fg = colors.white,
-      bg = colors.green,
-      active = true
+      bg = colors.gray
     }
-  }
-
-  local props = BUTTON_PROPS[self._state]
-  if self._locked then
-    props.active = false
+  else
+    button_props = {
+      fg = colors.white,
+      bg = colors.green
+    }
   end
 
   local button = self._ui.elements.button["button"]
-  button.text.fg = props.fg
-  button.background_color = props.bg
-  button.reactive = props.active
+  button.text.fg = button_props.fg
+  button.background_color = button_props.bg
+  button.reactive = not (self._suspended or self._locked)
 
   local lower_area_locked = self._ui.elements.rectangle["lower_area_locked"]
   lower_area_locked.visible = self._locked

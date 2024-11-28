@@ -1,64 +1,90 @@
-local Table = require "mb.algorithm.table"
+local Monitor = require "mb.peripheral.monitor"
 
 --- UI for the inner and outer door.
 ---@class ChamberUi
----@field private _state number Current state.
+---@field private _in_progress boolean Flag marking the decontamination process as being in progress.
+---@field private _suspended boolean Flag marking UI as suspended.
 ---@field private _ui table GuiH instance.
-local ChamberUi = {}
+local ChamberUi = {
+  NOT_IN_PROGRESS = -1
+}
 ChamberUi.__index = ChamberUi
 
-local States = {
-  OPEN = 1,
-  BUSY = 2,
-  CLOSED = 3,
-  DECON = 4
-}
+--- Panel config.
+---@class ChamberPanelConfig
+---@field device string Panel monitor.
+---@field name string? Optional. Room name shown inside chamber.
 
---- Door UI creation parameters.
+--- Chamber UI creation parameters.
 ---@class ChamberUiParams
----@field name string? Airlock name shown.
----@field inner_request_open function? Callback used to request inner door opening.
----@field outer_request_open function? Callback used to request outer door opening.
+---@field panel ChamberPanelConfig Panel config.
+---@field inner_request_open function Callback used to request inner door opening.
+---@field outer_request_open function Callback used to request outer door opening.
+---@field ui table GuiH.
 local ChamberUiParams = {}
 
 --- Constructor
----@param ui table GuiH instance.
----@param params ChamberUiParams? Chamber UI creation parameters.
-function ChamberUi.new(ui, params)
+---@param params ChamberUiParams Chamber UI creation parameters.
+function ChamberUi.new(params)
   local self = setmetatable({}, ChamberUi)
 
-  self._state = States.CLOSED
-  self._ui = ui
+  self._in_progress = false
+  self._suspended = false
+  self._ui = params.ui.new(Monitor.new(params.panel.device))
 
-  self:init_ui(params or {})
+  self:init_ui(params)
   
   return self
 end
 
---- Returns all available states.
-function ChamberUi.get_states()
-  return States
+--- Return whether suspended.
+function ChamberUi:is_suspended()
+  return self._suspended
 end
 
---- Return current state.
-function ChamberUi:get_state()
-  return self._state
+--- Suspend the UI.
+function ChamberUi:suspend()
+  self._suspended = true
+  self:update_ui()
 end
 
---- Set new state.
-function ChamberUi:set_state(state)
-  self._state = state
+--- Unsuspend the UI.
+function ChamberUi:resume()
+  self._suspended = false
   self:update_ui()
 end
 
 --- Return current progress.
 function ChamberUi:get_progress()
-  return self._ui.elements.progressbar["decon_bar"].value
+  if self._in_progress then
+    return self._ui.elements.progressbar["decon_bar"].value
+  else
+    return ChamberUi.NOT_IN_PROGRESS
+  end
 end
 
 --- Set new progress.
 function ChamberUi:set_progress(progress)
-  self._ui.elements.progressbar["decon_bar"].value = progress
+  if progress == ChamberUi.NOT_IN_PROGRESS then
+    self._in_progress = false
+  else
+    self._in_progress = true
+    self._ui.elements.progressbar["decon_bar"].value = progress
+  end
+
+  self:update_ui()
+end
+
+--- Start main loop.
+---@param params ExecutionParameters
+function ChamberUi:execute(params)
+  self._ui.execute(params.runtime, params.on_event, params.before_draw, params.after_draw)
+end
+
+--- Schedule async task.
+---@param params AsyncParameters
+function ChamberUi:async(params)
+  self._ui.async(params.fn, params.delay, params.error_flag, params.debug)
 end
 
 --- Init UI
@@ -85,7 +111,7 @@ function ChamberUi:init_ui(params)
     self._ui.new.text{
       name = "room_name",
       text = self._ui.text{
-        text = params.name,
+        text = params.panel.name,
         x = 1, y = 1,
         centered = true,
         transparent = true,
@@ -154,44 +180,36 @@ end
 --- Update UI based on the state.
 ---@private
 function ChamberUi:update_ui()
-  local active_button_props = {
-    fg = colors.white,
-    bg = colors.green,
-    active = true
-  }
-
-  local inactive_button_props = {
-    fg = colors.lightGray,
-    bg = colors.gray,
-    active = false
-  }
-
-  local BUTTON_PROPS = {
-    [States.OPEN] = inactive_button_props,
-    [States.BUSY] = inactive_button_props,
-    [States.CLOSED] = active_button_props,
-    [States.DECON] = inactive_button_props
-  }
-
-  local props = BUTTON_PROPS[self._state]
+  local button_props = {}
+  if self._suspended then
+    button_props = {
+      fg = colors.lightGray,
+      bg = colors.gray
+    }
+  else
+    button_props = {
+      fg = colors.white,
+      bg = colors.green
+    }
+  end
 
   local inner_button = self._ui.elements.button["inner_button"]
-  inner_button.visible = self._state ~= States.DECON
-  inner_button.text.fg = props.fg
-  inner_button.background_color = props.bg
-  inner_button.reactive = props.active
+  inner_button.visible = not self._in_progress
+  inner_button.text.fg = button_props.fg
+  inner_button.background_color = button_props.bg
+  inner_button.reactive = not self._suspended
 
   local outer_button = self._ui.elements.button["outer_button"]
-  outer_button.visible = self._state ~= States.DECON
-  outer_button.text.fg = props.fg
-  outer_button.background_color = props.bg
-  outer_button.reactive = props.active
+  outer_button.visible = not self._in_progress
+  outer_button.text.fg = button_props.fg
+  outer_button.background_color = button_props.bg
+  outer_button.reactive = not self._suspended
 
   local decon_bar = self._ui.elements.progressbar["decon_bar"]
-  decon_bar.visible = self._state == States.DECON
+  decon_bar.visible = self._in_progress
 
   local decon = self._ui.elements.text["decon"]
-  decon.visible = self._state == States.DECON
+  decon.visible = self._in_progress
 end
 
 return ChamberUi
