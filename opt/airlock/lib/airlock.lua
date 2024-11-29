@@ -113,6 +113,11 @@ function Airlock:apply_pns()
 
   local function translate(config)
     self._log:trace(("Translating %s."):format(config.device))
+    local symbolic_name = config.device
+    if self._config.pns.prefix then
+      symbolic_name = self._config.pns.prefix .. "." .. symbolic_name
+    end
+
     config.device = pns:look_up(self._config.pns.prefix .. "." .. config.device)
     self._log:trace(("Got %s."):format(config.device))
   end
