@@ -46,7 +46,7 @@ function Chamber.new(params)
   }
 
   self._ui = Ui.new{
-    panel = self._config.lock,
+    panel = self._config.panel,
     inner_request_open = params.inner_request_open,
     outer_request_open = params.outer_request_open,
     ui = params.ui
