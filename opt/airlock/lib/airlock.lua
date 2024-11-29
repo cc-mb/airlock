@@ -111,15 +111,20 @@ function Airlock:apply_pns()
   self._log:trace("Creating PNS client.")
   local pns = Pns.new{}
 
-  self._log:trace("Translating PNS names.")
-  self._config.chamber.decontamination.device = pns:look_up(self._config.chamber.decontamination.device)
-  self._config.chamber.panel.device = pns:look_up(self._config.chamber.panel.device)
-  self._config.inner.door.device = pns:look_up(self._config.inner.door.device)
-  self._config.inner.lock.device = pns:look_up(self._config.inner.lock.device)
-  self._config.inner.panel.device = pns:look_up(self._config.inner.panel.device)
-  self._config.outer.door.device = pns:look_up(self._config.outer.door.device)
-  self._config.outer.lock.device = pns:look_up(self._config.outer.lock.device)
-  self._config.outer.panel.device = pns:look_up(self._config.outer.panel.device)
+  local function translate(config)
+    self._log:trace(("Translating %s."):format(config.device))
+    config.device = pns:look_up(self._config.pns.prefix .. "." .. config.device)
+    self._log:trace(("Got %s."):format(config.device))
+  end
+
+  translate(self._config.chamber.decontamination.device)
+  translate(self._config.chamber.panel.device)
+  translate(self._config.inner.door.device)
+  translate(self._config.inner.lock.device)
+  translate(self._config.inner.panel.device)
+  translate(self._config.outer.door.device)
+  translate(self._config.outer.lock.device)
+  translate(self._config.outer.panel.device)
 
   if self._config.inner.lock.device == "" then
     self._config.inner.lock.device = nil
