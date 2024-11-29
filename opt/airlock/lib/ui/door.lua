@@ -34,7 +34,7 @@ function DoorUi.new(params)
 
   self._suspended = false
   self._locked = false
-  self._ui = params.ui.new(Monitor.new(params.panel.device))
+  self._ui = params.ui.new(Monitor.new{ name = params.panel.device})
 
   self:init_ui(params)
   

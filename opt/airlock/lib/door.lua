@@ -51,8 +51,16 @@ function Door.new(params)
   self._log = params.log
   self._log:trace("Door controller creation.")
 
-  self._door = DoorDevice.new(self._config.door.device, self._config.door.device_side)
-  self._lock = self._config.lock.device and RsReader.new(self._config.lock.device, self._config.lock.device_side)
+  self._door = DoorDevice.new{
+    name = self._config.door.device,
+    side = self._config.door.device_side
+  }
+
+  self._lock = self._config.lock.device and RsReader.new{
+    name = self._config.lock.device,
+    side = self._config.lock.device_side
+  }
+
   if not self._lock then
     self._log:info("No lock.")
   end

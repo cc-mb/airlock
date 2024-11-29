@@ -39,6 +39,6 @@ for _, arg in pairs(args) do
   end
 end
 
-local airlock = Airlock.new{ log = Logger.new(io.stdout, Logger.LEVEL.INFO) }
+local airlock = Airlock.new{ log = Logger.new(io.stdout, log_level) }
 
 airlock:run()

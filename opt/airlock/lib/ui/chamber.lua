@@ -30,7 +30,7 @@ function ChamberUi.new(params)
 
   self._in_progress = false
   self._suspended = false
-  self._ui = params.ui.new(Monitor.new(params.panel.device))
+  self._ui = params.ui.new(Monitor.new{ name = params.panel.device })
 
   self:init_ui(params)
   

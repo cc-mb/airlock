@@ -40,7 +40,11 @@ function Chamber.new(params)
   self._log = params.log
   self._log:trace("Chamber controller creation.")
 
-  self._decon = RsDevice.new(self._config.decontamination.device, self._config.decontamination.device_side)
+  self._decon = RsDevice.new{
+    name = self._config.decontamination.device,
+    side = self._config.decontamination.device_side
+  }
+
   self._ui = Ui.new{
     panel = self._config.lock,
     inner_request_open = params.inner_request_open,
