@@ -34,7 +34,9 @@ function DoorUi.new(params)
 
   self._suspended = false
   self._locked = false
-  self._ui = params.ui.new(Monitor.new{ name = params.panel.device})
+  local monitor = Monitor.new{ name = params.panel.device}
+  monitor.setTextScale(0.5)
+  self._ui = params.ui.new(monitor)
 
   self:init_ui(params)
   

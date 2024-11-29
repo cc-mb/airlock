@@ -1,6 +1,6 @@
 local Ui = require "airlock.lib.ui.door"
 
-local DoorDevice = require "mb.peripheral.rs_device"
+local DoorDevice = require "mb.peripheral.door"
 local RsReader = require "mb.peripheral.rs_reader"
 
 --- Door controller.

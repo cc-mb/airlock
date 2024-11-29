@@ -62,7 +62,7 @@ function Chamber:initialize()
   self._log:debug("Chamber initialization sequence.")
   self._decon:set_on()
   os.sleep(self._config.decontamination.duration)
-  self._door:set_off()
+  self._decon:set_off()
   self._log:trace("Chamber initialization sequence complete.")
 end
 
@@ -100,7 +100,7 @@ function Chamber:decontaminate()
   end
 
   self._log:debug("Stopping shower.")
-  self._door:set_off()
+  self._decon:set_off()
   self._ui:set_progress(Ui.NOT_IN_PROGRESS)
 
   self._log:info("Chamber decontamination done.")

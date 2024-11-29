@@ -30,7 +30,9 @@ function ChamberUi.new(params)
 
   self._in_progress = false
   self._suspended = false
-  self._ui = params.ui.new(Monitor.new{ name = params.panel.device })
+  local monitor = Monitor.new{ name = params.panel.device}
+  monitor.setTextScale(0.5)
+  self._ui = params.ui.new(monitor)
 
   self:init_ui(params)
   
