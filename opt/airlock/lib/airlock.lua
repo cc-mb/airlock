@@ -80,7 +80,6 @@ function Airlock.new(params)
   end
 
   self._config = config
-  self._terminate = false
 
   self:init()
 
@@ -134,15 +133,20 @@ end
 function Airlock:main_loop()
   local last_clock = os.clock()
 
+  self._log:trace(("Main loop started @ %f."):format(last_clock))
+
+  self._terminate = false
   while not self._terminate do
     local clock = os.clock()
-    self._log:trace(("Tick @ %f"):format(clock))
+    self._log:trace(("Tick @ %f."):format(clock))
     self:update(clock - last_clock)
     last_clock = clock
 
     -- limit to 4 Hz
     os.sleep(0.25)
   end
+
+  self._log:trace(("Main loop ended @ %f."):format(os.clock()))
 end
 
 --- Update.
