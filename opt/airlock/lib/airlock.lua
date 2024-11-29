@@ -122,14 +122,14 @@ function Airlock:apply_pns()
     self._log:trace(("Got %s."):format(config.device))
   end
 
-  translate(self._config.chamber.decontamination.device)
-  translate(self._config.chamber.panel.device)
-  translate(self._config.inner.door.device)
-  translate(self._config.inner.lock.device)
-  translate(self._config.inner.panel.device)
-  translate(self._config.outer.door.device)
-  translate(self._config.outer.lock.device)
-  translate(self._config.outer.panel.device)
+  translate(self._config.chamber.decontamination)
+  translate(self._config.chamber.panel)
+  translate(self._config.inner.door)
+  translate(self._config.inner.lock)
+  translate(self._config.inner.panel)
+  translate(self._config.outer.door)
+  translate(self._config.outer.lock)
+  translate(self._config.outer.panel)
 
   if self._config.inner.lock.device == "" then
     self._config.inner.lock.device = nil
