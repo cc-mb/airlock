@@ -14,6 +14,7 @@ Chamber.__index = Chamber
 --- Chabmer config.
 ---@class ChamberConfig
 ---@field decontamination DecontaminationConfig Decontamination configuration.
+---@field inner_on_right boolean If set, right side is considered inner and left side is considered outer. Otherwise it's the opposite.
 ---@field panel ChamberPanelConfig Panel configuration.
 
 --- Decontamination config.
@@ -45,10 +46,19 @@ function Chamber.new(params)
     side = self._config.decontamination.device_side
   }
 
+  local left_request_open = params.inner_request_open
+  local right_request_open = params.outer_request_open
+
+  if params.config.inner_on_right then
+    self._log:trace("Inner is on the right side.")
+    left_request_open = params.outer_request_open
+    right_request_open = params.inner_request_open
+  end
+
   self._ui = Ui.new{
     panel = self._config.panel,
-    inner_request_open = params.inner_request_open,
-    outer_request_open = params.outer_request_open,
+    left_request_open = left_request_open,
+    right_request_open = right_request_open,
     ui = params.ui
   }
 

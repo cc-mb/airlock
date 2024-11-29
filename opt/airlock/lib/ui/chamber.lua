@@ -18,8 +18,8 @@ ChamberUi.__index = ChamberUi
 --- Chamber UI creation parameters.
 ---@class ChamberUiParams
 ---@field panel ChamberPanelConfig Panel config.
----@field inner_request_open function Callback used to request inner door opening.
----@field outer_request_open function Callback used to request outer door opening.
+---@field left_request_open function Callback used to request left door opening.
+---@field right_request_open function Callback used to request right door opening.
 ---@field ui table GuiH.
 local ChamberUiParams = {}
 
@@ -124,7 +124,7 @@ function ChamberUi:init_ui(params)
   end
 
   self._ui.new.button{
-    name = "inner_button",
+    name = "left_button",
     x = 3, y = 5,
     width = (self._ui.width / 2) - 3, height = self._ui.height - 5,
     text = self._ui.text{
@@ -134,11 +134,11 @@ function ChamberUi:init_ui(params)
       fg = colors.white
     },
     background_color = colors.green,
-    on_click = params.inner_request_open
+    on_click = params.left_request_open
   }
 
   self._ui.new.button{
-    name = "outer_button",
+    name = "right_button",
     x = (self._ui.width / 2) + 2, y = 5,
     width = (self._ui.width / 2) - 3, height = self._ui.height - 5,
     text = self._ui.text{
@@ -148,7 +148,7 @@ function ChamberUi:init_ui(params)
       fg = colors.white
     },
     background_color = colors.green,
-    on_click = params.outer_request_open
+    on_click = params.right_request_open
   }
 
   self._ui.new.progressbar{
@@ -195,17 +195,17 @@ function ChamberUi:update_ui()
     }
   end
 
-  local inner_button = self._ui.elements.button["inner_button"]
-  inner_button.visible = not self._in_progress
-  inner_button.text.fg = button_props.fg
-  inner_button.background_color = button_props.bg
-  inner_button.reactive = not self._suspended
+  local left_button = self._ui.elements.button["left_button"]
+  left_button.visible = not self._in_progress
+  left_button.text.fg = button_props.fg
+  left_button.background_color = button_props.bg
+  left_button.reactive = not self._suspended
 
-  local outer_button = self._ui.elements.button["outer_button"]
-  outer_button.visible = not self._in_progress
-  outer_button.text.fg = button_props.fg
-  outer_button.background_color = button_props.bg
-  outer_button.reactive = not self._suspended
+  local right_button = self._ui.elements.button["right_button"]
+  right_button.visible = not self._in_progress
+  right_button.text.fg = button_props.fg
+  right_button.background_color = button_props.bg
+  right_button.reactive = not self._suspended
 
   local decon_bar = self._ui.elements.progressbar["decon_bar"]
   decon_bar.visible = self._in_progress
