@@ -1,8 +1,9 @@
 local Chamber = require "airlock.lib.chamber"
 local Door = require "airlock.lib.door"
 
-local Table = require "mb.algorithm.table"
+local Pns = require "pns.client"
 
+local Table = require "mb.algorithm.table"
 local PrefixedLogger = require "mb.log.prefixed_logger"
 local VOID_LOGGER = require "mb.log.void_logger"
 
@@ -46,9 +47,15 @@ Airlock.__index = Airlock
 
 --- Master config.
 ---@class Config
+---@field pns PnsConfig PNS configuration.
 ---@field chamber ChamberConfig Chamber configuration.
 ---@field inner SideConfig Inner side configuration.
 ---@field outer SideConfig Outer side configuration.
+
+--- PNS config.
+---@class PnsConfig
+---@field enabled boolean If set PNS will be used.
+---@field prefix string? Prefix applied to all symbolic names.
 
 --- Airlock creation parameters.
 ---@class AirlockCreationParams
@@ -81,11 +88,50 @@ function Airlock.new(params)
 
   self._config = config
 
+  if self._config.pns.enabled then
+    self._log:debug("PNS enabled.")
+    self:apply_pns()
+  end
+
   self:init()
 
   self._log:trace("Airlock created.")
 
   return self
+end
+
+--- Apply PNS on names.
+---@private
+function Airlock:apply_pns()
+  self._log:trace("Applying PNS.")
+
+  self._log:debug("Starting RedNet.")
+  peripheral.find("modem", rednet.open)
+
+  self._log:trace("Creating PNS client.")
+  local pns = Pns.new{}
+
+  self._log:trace("Translating PNS names.")
+  self._config.chamber.decontamination.device = pns:look_up(self._config.chamber.decontamination.device)
+  self._config.chamber.panel.device = pns:look_up(self._config.chamber.panel.device)
+  self._config.inner.door.device = pns:look_up(self._config.inner.door.device)
+  self._config.inner.lock.device = pns:look_up(self._config.inner.lock.device)
+  self._config.inner.panel.device = pns:look_up(self._config.inner.panel.device)
+  self._config.outer.door.device = pns:look_up(self._config.outer.door.device)
+  self._config.outer.lock.device = pns:look_up(self._config.outer.lock.device)
+  self._config.outer.panel.device = pns:look_up(self._config.outer.panel.device)
+
+  if self._config.inner.lock.device == "" then
+    self._config.inner.lock.device = nil
+  end
+
+  if self._config.outer.lock.device == "" then
+    self._config.outer.lock.device = nil
+  end
+
+  self._log:trace("All PNS names translated.")
+  self._log:debug("Stopping RedNet.")
+  rednet.close()
 end
 
 --- Init devices software.
