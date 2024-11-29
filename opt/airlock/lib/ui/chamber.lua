@@ -109,7 +109,7 @@ function ChamberUi:init_ui(params)
     color = colors.yellow
   }
 
-  if params.name then
+  if params.panel.name then
     self._ui.new.text{
       name = "room_name",
       text = self._ui.text{

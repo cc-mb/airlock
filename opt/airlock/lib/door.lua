@@ -112,7 +112,7 @@ function Door:update(delta_t)
   if self._lock then
     if self._lock:is_on() then
       if self._unlocked_for <= 0 then
-        self._log:debug("Locking.")
+        self._log:debug("Unlocking.")
         self._unlocked_for = self._config.lock.unlock_duration
         self._ui:set_locked(false)
       end
@@ -120,7 +120,7 @@ function Door:update(delta_t)
       self._log:trace("Lock timer decremented.")
       self._unlocked_for = self._unlocked_for - delta_t
     elseif not self._ui:get_locked() then
-      self._log:debug("Unlocking.")
+      self._log:debug("Locking.")
       self._ui:set_locked(true)
     end
   end
