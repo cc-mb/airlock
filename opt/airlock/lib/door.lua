@@ -63,6 +63,8 @@ function Door.new(params)
 
   if not self._lock then
     self._log:info("No lock.")
+  else
+    self._unlocked_for = 0.0
   end
 
   self._ui = Ui.new{
