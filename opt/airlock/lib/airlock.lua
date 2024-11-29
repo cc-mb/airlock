@@ -35,7 +35,7 @@ local Airlock = {
   --- Configuration file.
   CONFIG_FILE = "/etc/airlock.cfg",
   --- Default configuration file.
-  DEFAULT_CONFIG_FILE = "default_config.cfg",
+  DEFAULT_CONFIG_FILE = "/opt/airlock/default_config.cfg",
   --- Airlock sides.
   SIDES = {
     INNER = 0,

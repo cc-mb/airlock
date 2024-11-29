@@ -1,1 +1,3 @@
-shell.run("/opt/airlock/bin/airlock")
+local args = {...}
+
+shell.run("/opt/airlock/bin/airlock " .. table.concat(args, " "))
