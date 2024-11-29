@@ -1,6 +1,6 @@
 local Monitor = require "mb.peripheral.monitor"
 
---- UI for the inner and outer door.
+--- UI for the chamber.
 ---@class ChamberUi
 ---@field private _in_progress boolean Flag marking the decontamination process as being in progress.
 ---@field private _suspended boolean Flag marking UI as suspended.

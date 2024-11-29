@@ -27,8 +27,8 @@ local GuiH = require "GuiH"
 ---@class Airlock
 ---@field private _config Config Config.
 ---@field private _chamber Chamber Chamber controller.
----@field private _inner Door Inner door controller.
----@field private _outer Door Outer door controller.
+---@field private _left Door Left door controller.
+---@field private _right Door Right door controller.
 ---@field private _last_open number Side which was last open.
 ---@field private _log Logger Logger.
 ---@field private _terminate boolean If set airlock will terminate.
@@ -39,8 +39,8 @@ local Airlock = {
   DEFAULT_CONFIG_FILE = "/opt/airlock/default_config.cfg",
   --- Airlock sides.
   SIDES = {
-    INNER = 0,
-    OUTER = 1
+    LEFT = 0,
+    RIGHT = 1
   }
 }
 Airlock.__index = Airlock
@@ -49,8 +49,8 @@ Airlock.__index = Airlock
 ---@class Config
 ---@field pns PnsConfig PNS configuration.
 ---@field chamber ChamberConfig Chamber configuration.
----@field inner SideConfig Inner side configuration.
----@field outer SideConfig Outer side configuration.
+---@field left SideConfig Left side configuration.
+---@field right SideConfig Right side configuration.
 
 --- PNS config.
 ---@class PnsConfig
@@ -124,19 +124,19 @@ function Airlock:apply_pns()
 
   translate(self._config.chamber.decontamination)
   translate(self._config.chamber.panel)
-  translate(self._config.inner.door)
-  translate(self._config.inner.lock)
-  translate(self._config.inner.panel)
-  translate(self._config.outer.door)
-  translate(self._config.outer.lock)
-  translate(self._config.outer.panel)
+  translate(self._config.left.door)
+  translate(self._config.left.lock)
+  translate(self._config.left.panel)
+  translate(self._config.right.door)
+  translate(self._config.right.lock)
+  translate(self._config.right.panel)
 
-  if self._config.inner.lock.device == "" then
-    self._config.inner.lock.device = nil
+  if self._config.left.lock.device == "" then
+    self._config.left.lock.device = nil
   end
 
-  if self._config.outer.lock.device == "" then
-    self._config.outer.lock.device = nil
+  if self._config.right.lock.device == "" then
+    self._config.right.lock.device = nil
   end
 
   self._log:trace("All PNS names translated.")
@@ -152,22 +152,22 @@ function Airlock:init()
   self._chamber = Chamber.new{
     config = self._config.chamber,
     log = PrefixedLogger.new(self._log, "[chamber]"),
-    inner_request_open = function () self:inner_request_open() end,
-    outer_request_open = function () self:outer_request_open() end,
+    left_request_open = function () self:left_request_open() end,
+    right_request_open = function () self:right_request_open() end,
     ui = GuiH
   }
 
-  self._inner = Door.new{
-    config = self._config.inner,
-    log = PrefixedLogger.new(self._log, "[inner]"),
-    request_open = function () self:inner_request_open() end,
+  self._left = Door.new{
+    config = self._config.left,
+    log = PrefixedLogger.new(self._log, "[left]"),
+    request_open = function () self:left_request_open() end,
     ui = GuiH
   }
 
-  self._outer = Door.new{
-    config = self._config.outer,
-    log = PrefixedLogger.new(self._log, "[outer]"),
-    request_open = function () self:outer_request_open() end,
+  self._right = Door.new{
+    config = self._config.right,
+    log = PrefixedLogger.new(self._log, "[right]"),
+    request_open = function () self:right_request_open() end,
     ui = GuiH,
   }
 
@@ -178,9 +178,9 @@ end
 ---@private
 function Airlock:initialize()
   self._log:debug("Airlock initialization.")
-  self._inner:initialize()
+  self._left:initialize()
   self._chamber:initialize()
-  self._outer:initialize()
+  self._right:initialize()
   self._log:trace("Airlock initialization done.")
 end
 
@@ -210,8 +210,8 @@ end
 ---@param delta_t number Time difference since last update. [s]
 function Airlock:update(delta_t)
   self._log:trace(("Airlock update with delta T %f."):format(delta_t))
-  self._inner:update(delta_t)
-  self._outer:update(delta_t)
+  self._left:update(delta_t)
+  self._right:update(delta_t)
   self._log:trace("Airlock updated.")
 end
 
@@ -221,8 +221,8 @@ function Airlock:run(...)
   self._log:info("Starting airlock.")
   self:initialize()
 
-  self._chamber:async{ fn = function() self._inner:execute{} end }
-  self._chamber:async{ fn = function() self._outer:execute{} end }
+  self._chamber:async{ fn = function() self._left:execute{} end }
+  self._chamber:async{ fn = function() self._right:execute{} end }
 
   for _, task in pairs({...}) do
     self._chamber:async{ fn = function() task() end }
@@ -233,58 +233,58 @@ function Airlock:run(...)
   self._log:info("Airlock stopped.")
 end
 
---- Request opening of inner doors.
+--- Request opening of the left door.
 ---@private
-function Airlock:inner_request_open()
-  self._log:debug("Inner open requested.")
+function Airlock:left_request_open()
+  self._log:debug("Left open requested.")
   self._chamber:async{
     fn = function()
       self._log:trace("Suspend all.")
       self._chamber:suspend()
-      self._inner:suspend()
-      self._outer:suspend()
+      self._left:suspend()
+      self._right:suspend()
 
-      if self._last_open ~= Airlock.SIDES.INNER and (self._config.chamber.decontamination.direction == "out-in" or self._config.chamber.decontamination.direction == "both") then
+      if self._last_open ~= Airlock.SIDES.LEFT and (self._config.chamber.decontamination.direction == "right-to-left" or self._config.chamber.decontamination.direction == "bidirectional") then
         self._log:trace(("Decontamination will take place as \"%s\" strategy is used."):format(self._config.chamber.decontamination.direction))
         self._chamber:decontaminate()
       end
 
       self._log:trace("Door procedure.")
-      self._inner:open()
-      self._last_open = Airlock.SIDES.INNER
+      self._left:open()
+      self._last_open = Airlock.SIDES.LEFT
 
       self._log:trace("Unsuspend all.")
       self._chamber:resume()
-      self._inner:resume()
-      self._outer:resume()
+      self._left:resume()
+      self._right:resume()
     end
   }
 end
 
---- Request opening of outer doors.
+--- Request opening of the right door.
 ---@private
-function Airlock:outer_request_open()
-  self._log:debug("Outer open requested.")
+function Airlock:right_request_open()
+  self._log:debug("Right open requested.")
   self._chamber:async{
     fn = function()
       self._log:trace("Suspend all.")
       self._chamber:suspend()
-      self._inner:suspend()
-      self._outer:suspend()
+      self._left:suspend()
+      self._right:suspend()
 
-      if self._last_open ~= Airlock.SIDES.OUTER and (self._config.chamber.decontamination.direction == "in-out" or self._config.chamber.decontamination.direction == "both") then
+      if self._last_open ~= Airlock.SIDES.RIGHT and (self._config.chamber.decontamination.direction == "left-to-right" or self._config.chamber.decontamination.direction == "bidirectional") then
         self._log:trace(("Decontamination will take place as \"%s\" strategy is used."):format(self._config.chamber.decontamination.direction))
         self._chamber:decontaminate()
       end
 
       self._log:trace("Door procedure.")
-      self._outer:open()
-      self._last_open = Airlock.SIDES.OUTER
+      self._right:open()
+      self._last_open = Airlock.SIDES.RIGHT
 
       self._log:trace("Unsuspend all.")
       self._chamber:resume()
-      self._inner:resume()
-      self._outer:resume()
+      self._left:resume()
+      self._right:resume()
     end
   }
 end

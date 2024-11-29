@@ -14,7 +14,6 @@ Chamber.__index = Chamber
 --- Chabmer config.
 ---@class ChamberConfig
 ---@field decontamination DecontaminationConfig Decontamination configuration.
----@field inner_on_right boolean If set, right side is considered inner and left side is considered outer. Otherwise it's the opposite.
 ---@field panel ChamberPanelConfig Panel configuration.
 
 --- Decontamination config.
@@ -22,13 +21,13 @@ Chamber.__index = Chamber
 ---@field device string Decontamination controller name.
 ---@field device_side string Decontamination controller side.
 ---@field duration number Duration of decontamination process. [s]
----@field direction string Direction requiring decontamination. Valid values are "none", "in-out", "out-in" and "both".
+---@field direction string Direction requiring decontamination. Valid values are "none", "left-to-right", "right-to-left" and "bidirectional".
 
 --- Chamber creation parameters.
 ---@class ChamberCreationParams
 ---@field config ChamberConfig Chamber configuration.
----@field inner_request_open function Callback used to request inner door opening.
----@field outer_request_open function Callback used to request outer door opening.
+---@field left_request_open function Callback used to request left door opening.
+---@field right_request_open function Callback used to request right door opening.
 ---@field log Logger Logger.
 ---@field ui table GuiH
 
@@ -46,19 +45,10 @@ function Chamber.new(params)
     side = self._config.decontamination.device_side
   }
 
-  local left_request_open = params.inner_request_open
-  local right_request_open = params.outer_request_open
-
-  if params.config.inner_on_right then
-    self._log:trace("Inner is on the right side.")
-    left_request_open = params.outer_request_open
-    right_request_open = params.inner_request_open
-  end
-
   self._ui = Ui.new{
     panel = self._config.panel,
-    left_request_open = left_request_open,
-    right_request_open = right_request_open,
+    left_request_open = params.left_request_open,
+    right_request_open = params.right_request_open,
     ui = params.ui
   }
 

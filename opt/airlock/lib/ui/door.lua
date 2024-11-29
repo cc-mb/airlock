@@ -1,6 +1,6 @@
 local Monitor = require "mb.peripheral.monitor"
 
---- UI for the inner and outer door.
+--- UI for the door.
 ---@class DoorUi
 ---@field private _locked boolean If set controls are locked.
 ---@field private _suspended boolean Flag marking UI as suspended.
