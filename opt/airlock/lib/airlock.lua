@@ -1,5 +1,5 @@
-local Chamber = require "chamber"
-local Door = require "door" 
+local Chamber = require "airlock.lib.chamber"
+local Door = require "airlock.lib.door"
 
 local Table = require "mb.algorithm.table"
 

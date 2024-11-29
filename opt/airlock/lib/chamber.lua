@@ -1,4 +1,4 @@
-local Ui = require "ui.chamber"
+local Ui = require "airlock.lib.ui.chamber"
 
 local RsDevice = require "mb.peripheral.rs_device"
 
