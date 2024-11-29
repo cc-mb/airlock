@@ -195,6 +195,7 @@ function Airlock:inner_request_open()
 
       self._log:trace("Door procedure.")
       self._inner:open()
+      self._last_open = Airlock.SIDES.INNER
 
       self._log:trace("Unsuspend all.")
       self._chamber:resume()
@@ -221,7 +222,8 @@ function Airlock:outer_request_open()
       end
 
       self._log:trace("Door procedure.")
-      self._inner:open()
+      self._outer:open()
+      self._last_open = Airlock.SIDES.OUTER
 
       self._log:trace("Unsuspend all.")
       self._chamber:resume()
