@@ -69,7 +69,7 @@ function Door.new(params)
     panel = self._config.panel,
     lock_level = self._config.lock.level,
     request_open = params.request_open,
-    ui = self._ui
+    ui = params.ui
   }
 
   self._log:trace("Door controller created.")

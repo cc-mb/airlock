@@ -49,7 +49,7 @@ function Chamber.new(params)
     panel = self._config.lock,
     inner_request_open = params.inner_request_open,
     outer_request_open = params.outer_request_open,
-    ui = self._ui
+    ui = params.ui
   }
 
   self._log:trace("Chamber controller created.")
